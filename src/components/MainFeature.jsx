@@ -802,8 +802,11 @@ const MainFeature = () => {
                       </div>
                     </div>
                   </motion.div>
+
                 ))}
               </div>
+              </div>
+
 
                 
                 {filteredClients.length === 0 && clientSearchTerm && (
