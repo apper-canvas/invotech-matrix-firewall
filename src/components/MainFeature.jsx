@@ -108,6 +108,8 @@ const MainFeature = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [clientSearchTerm, setClientSearchTerm] = useState('')
+  const [showAddClientForm, setShowAddClientForm] = useState(true)
+
 
 
   // Calculate invoice totals
@@ -568,23 +570,43 @@ const MainFeature = () => {
                 </h3>
               </div>
 
-              {/* Client Search Bar - Above Client List */}
+              {/* Client Search Bar */}
               <div className="mb-6">
-                <div className="relative max-w-md">
-                  <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by company name or contact name..."
-                    value={clientSearchTerm}
-                    onChange={(e) => setClientSearchTerm(e.target.value)}
-                    className="input-field pl-10 w-full focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-                  />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="relative flex-1 max-w-md">
+                    <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
+                    <input
+                      type="text"
+                      placeholder="Search by company name or contact name..."
+                      value={clientSearchTerm}
+                      onChange={(e) => {
+                        setClientSearchTerm(e.target.value)
+                        setShowAddClientForm(!e.target.value)
+                      }}
+                      className="input-field pl-10 w-full focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                    />
+                    {clientSearchTerm && (
+                      <button
+                        onClick={() => {
+                          setClientSearchTerm('')
+                          setShowAddClientForm(true)
+                        }}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-surface-400 hover:text-surface-600 transition-colors"
+                      >
+                        <ApperIcon name="X" className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                   {clientSearchTerm && (
                     <button
-                      onClick={() => setClientSearchTerm('')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-surface-400 hover:text-surface-600 transition-colors"
+                      onClick={() => {
+                        setClientSearchTerm('')
+                        setShowAddClientForm(true)
+                      }}
+                      className="btn-primary flex items-center space-x-2 px-4 py-3"
                     >
-                      <ApperIcon name="X" className="w-4 h-4" />
+                      <ApperIcon name="UserPlus" className="w-4 h-4" />
+                      <span>Add New Client</span>
                     </button>
                   )}
                 </div>
@@ -593,138 +615,142 @@ const MainFeature = () => {
 
 
 
-              {/* Add New Client Form */}
-              <div className="card p-6 bg-surface-50 dark:bg-surface-700/50">
-                <h4 className="font-bold text-surface-900 dark:text-surface-100 mb-4">
-                  Add New Client Profile
-                </h4>
-                
-                {/* Basic Information */}
-                <div className="mb-6">
-                  <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
-                    Basic Information
-                  </h5>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Company Name *"
-                      value={newClient.companyName}
-                      onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
-                      className="input-field"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Contact Person"
-                      value={newClient.contactPerson}
-                      onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
-                      className="input-field"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email Address *"
-                      value={newClient.email}
-                      onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                      className="input-field"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Phone Number"
-                      value={newClient.phone}
-                      onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-                      className="input-field"
-                    />
-                  </div>
-                </div>
 
-                {/* Billing Address */}
-                <div className="mb-6">
-                  <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
-                    Billing Address
-                  </h5>
-                  <div className="grid grid-cols-1 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Street Address"
-                      value={newClient.billingAddress.street}
-                      onChange={(e) => setNewClient({ 
-                        ...newClient, 
-                        billingAddress: { ...newClient.billingAddress, street: e.target.value }
-                      })}
-                      className="input-field"
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Add New Client Form - Only show when not searching */}
+              {showAddClientForm && (
+                <div className="card p-6 bg-surface-50 dark:bg-surface-700/50 mb-6">
+                  <h4 className="font-bold text-surface-900 dark:text-surface-100 mb-4">
+                    Add New Client Profile
+                  </h4>
+                  
+                  {/* Basic Information */}
+                  <div className="mb-6">
+                    <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                      Basic Information
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <input
                         type="text"
-                        placeholder="City"
-                        value={newClient.billingAddress.city}
-                        onChange={(e) => setNewClient({ 
-                          ...newClient, 
-                          billingAddress: { ...newClient.billingAddress, city: e.target.value }
-                        })}
+                        placeholder="Company Name *"
+                        value={newClient.companyName}
+                        onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
                         className="input-field"
                       />
                       <input
                         type="text"
-                        placeholder="State/Province"
-                        value={newClient.billingAddress.state}
-                        onChange={(e) => setNewClient({ 
-                          ...newClient, 
-                          billingAddress: { ...newClient.billingAddress, state: e.target.value }
-                        })}
+                        placeholder="Contact Person"
+                        value={newClient.contactPerson}
+                        onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
                         className="input-field"
                       />
                       <input
+                        type="email"
+                        placeholder="Email Address *"
+                        value={newClient.email}
+                        onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                        className="input-field"
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        value={newClient.phone}
+                        onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                        className="input-field"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Billing Address */}
+                  <div className="mb-6">
+                    <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                      Billing Address
+                    </h5>
+                    <div className="grid grid-cols-1 gap-4">
+                      <input
                         type="text"
-                        placeholder="Postal Code"
-                        value={newClient.billingAddress.postalCode}
+                        placeholder="Street Address"
+                        value={newClient.billingAddress.street}
                         onChange={(e) => setNewClient({ 
                           ...newClient, 
-                          billingAddress: { ...newClient.billingAddress, postalCode: e.target.value }
+                          billingAddress: { ...newClient.billingAddress, street: e.target.value }
+                        })}
+                        className="input-field"
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input
+                          type="text"
+                          placeholder="City"
+                          value={newClient.billingAddress.city}
+                          onChange={(e) => setNewClient({ 
+                            ...newClient, 
+                            billingAddress: { ...newClient.billingAddress, city: e.target.value }
+                          })}
+                          className="input-field"
+                        />
+                        <input
+                          type="text"
+                          placeholder="State/Province"
+                          value={newClient.billingAddress.state}
+                          onChange={(e) => setNewClient({ 
+                            ...newClient, 
+                            billingAddress: { ...newClient.billingAddress, state: e.target.value }
+                          })}
+                          className="input-field"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Postal Code"
+                          value={newClient.billingAddress.postalCode}
+                          onChange={(e) => setNewClient({ 
+                            ...newClient, 
+                            billingAddress: { ...newClient.billingAddress, postalCode: e.target.value }
+                          })}
+                          className="input-field"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Country"
+                        value={newClient.billingAddress.country}
+                        onChange={(e) => setNewClient({ 
+                          ...newClient, 
+                          billingAddress: { ...newClient.billingAddress, country: e.target.value }
                         })}
                         className="input-field"
                       />
                     </div>
-                    <input
-                      type="text"
-                      placeholder="Country"
-                      value={newClient.billingAddress.country}
-                      onChange={(e) => setNewClient({ 
-                        ...newClient, 
-                        billingAddress: { ...newClient.billingAddress, country: e.target.value }
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={addClient}
+                      className="btn-primary flex-1"
+                    >
+                      <ApperIcon name="UserPlus" className="w-4 h-4 mr-2" />
+                      Add Client Profile
+                    </button>
+                    <button
+                      onClick={() => setNewClient({ 
+                        companyName: '', 
+                        contactPerson: '', 
+                        email: '', 
+                        phone: '',
+                        billingAddress: {
+                          street: '',
+                          city: '',
+                          state: '',
+                          postalCode: '',
+                          country: ''
+                        }
                       })}
-                      className="input-field"
-                    />
+                      className="btn-secondary"
+                    >
+                      Clear Form
+                    </button>
                   </div>
                 </div>
+              )}
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={addClient}
-                    className="btn-primary flex-1"
-                  >
-                    <ApperIcon name="UserPlus" className="w-4 h-4 mr-2" />
-                    Add Client Profile
-                  </button>
-                  <button
-                    onClick={() => setNewClient({ 
-                      companyName: '', 
-                      contactPerson: '', 
-                      email: '', 
-                      phone: '',
-                      billingAddress: {
-                        street: '',
-                        city: '',
-                        state: '',
-                        postalCode: '',
-                        country: ''
-                      }
-                    })}
-                    className="btn-secondary"
-                  >
-                    Clear Form
-                  </button>
-                </div>
-              </div>
 
 
               <div className="grid gap-4">
