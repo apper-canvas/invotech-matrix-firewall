@@ -567,17 +567,28 @@ const MainFeature = () => {
                   Client Management
                 </h3>
                 <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Client Search Bar */}
                   <div className="relative">
                     <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
                     <input
                       type="text"
-                      placeholder="Search clients..."
+                      placeholder="Search by company name or contact..."
                       value={clientSearchTerm}
                       onChange={(e) => setClientSearchTerm(e.target.value)}
-                      className="input-field pl-10 w-full sm:w-64"
+                      className="input-field pl-10 w-full sm:w-64 focus:w-full transition-all duration-200"
                     />
+                    {clientSearchTerm && (
+                      <button
+                        onClick={() => setClientSearchTerm('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-surface-400 hover:text-surface-600 transition-colors"
+                      >
+                        <ApperIcon name="X" className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
+
                 </div>
+
               </div>
 
 
