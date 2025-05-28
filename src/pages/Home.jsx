@@ -1,9 +1,16 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { motion } from 'framer-motion'
 import MainFeature from '../components/MainFeature'
+import { useAuth } from '../context/AuthContext'
+
 import ApperIcon from '../components/ApperIcon'
 
 const Home = () => {
+  const navigate = useNavigate()
+  const { user, logout, isAuthenticated } = useAuth()
+
   const [darkMode, setDarkMode] = useState(false)
 
   const toggleDarkMode = () => {
@@ -28,17 +35,64 @@ const Home = () => {
               <h1 className="text-2xl font-bold text-gradient">InvoTech</h1>
             </motion.div>
             
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={toggleDarkMode}
-              className="p-2 rounded-xl bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors duration-200"
-            >
-              <ApperIcon 
-                name={darkMode ? "Sun" : "Moon"} 
-                className="w-5 h-5 text-surface-700 dark:text-surface-300" 
-              />
-            </motion.button>
+            <div className="flex items-center space-x-3">
+              {isAuthenticated ? (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-surface-100 dark:bg-surface-700 rounded-xl">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-semibold">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      {user?.name}
+                    </span>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary transition-colors duration-200"
+                  >
+                    Logout
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center space-x-3"
+                >
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary transition-colors duration-200"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => navigate('/signup')}
+                    className="btn-primary text-sm px-4 py-2"
+                  >
+                    Sign Up
+                  </button>
+                </motion.div>
+              )}
+              
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={toggleDarkMode}
+                className="p-2 rounded-xl bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors duration-200"
+              >
+                <ApperIcon 
+                  name={darkMode ? "Sun" : "Moon"} 
+                  className="w-5 h-5 text-surface-700 dark:text-surface-300" 
+                />
+              </motion.button>
+            </div>
+
           </div>
         </div>
       </header>
