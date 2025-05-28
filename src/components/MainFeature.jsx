@@ -108,6 +108,8 @@ const MainFeature = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [clientSearchTerm, setClientSearchTerm] = useState('')
+  const [activeClientTab, setActiveClientTab] = useState('list')
+
   const [showAddClientForm, setShowAddClientForm] = useState(true)
 
 
@@ -570,310 +572,355 @@ const MainFeature = () => {
                 </h3>
               </div>
 
-              {/* Client Search Bar */}
-              <div className="mb-6">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="relative flex-1 max-w-md">
-                    <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
-                    <input
-                      type="text"
-                      placeholder="Search by company name or contact name..."
-                      value={clientSearchTerm}
-                      onChange={(e) => {
-                        setClientSearchTerm(e.target.value)
-                        setShowAddClientForm(!e.target.value)
-                      }}
-                      className="input-field pl-10 w-full focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-                    />
-                    {clientSearchTerm && (
-                      <button
-                        onClick={() => {
-                          setClientSearchTerm('')
-                          setShowAddClientForm(true)
-                        }}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-surface-400 hover:text-surface-600 transition-colors"
-                      >
-                        <ApperIcon name="X" className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                  {clientSearchTerm && (
-                    <button
-                      onClick={() => {
-                        setClientSearchTerm('')
-                        setShowAddClientForm(true)
-                      }}
-                      className="btn-primary flex items-center space-x-2 px-4 py-3"
-                    >
-                      <ApperIcon name="UserPlus" className="w-4 h-4" />
-                      <span>Add New Client</span>
-                    </button>
-                  )}
-                </div>
+              {/* Client Sub-Tab Navigation */}
+              <div className="border-b border-surface-200 dark:border-surface-700 mb-6">
+                <nav className="flex space-x-6">
+                  <button
+                    onClick={() => setActiveClientTab('list')}
+                    className={`flex items-center space-x-2 py-3 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                      activeClientTab === 'list'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    }`}
+                  >
+                    <ApperIcon name="Users" className="w-4 h-4" />
+                    <span>Client List</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveClientTab('add')}
+                    className={`flex items-center space-x-2 py-3 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                      activeClientTab === 'add'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    }`}
+                  >
+                    <ApperIcon name="UserPlus" className="w-4 h-4" />
+                    <span>Add New Client</span>
+                  </button>
+                </nav>
               </div>
 
-
-
-
-
-              {/* Add New Client Form - Only show when not searching */}
-              {showAddClientForm && (
-                <div className="card p-6 bg-surface-50 dark:bg-surface-700/50 mb-6">
-                  <h4 className="font-bold text-surface-900 dark:text-surface-100 mb-4">
-                    Add New Client Profile
-                  </h4>
-                  
-                  {/* Basic Information */}
-                  <div className="mb-6">
-                    <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
-                      Basic Information
-                    </h5>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Company Name *"
-                        value={newClient.companyName}
-                        onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
-                        className="input-field"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Contact Person"
-                        value={newClient.contactPerson}
-                        onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
-                        className="input-field"
-                      />
-                      <input
-                        type="email"
-                        placeholder="Email Address *"
-                        value={newClient.email}
-                        onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                        className="input-field"
-                      />
-                      <input
-                        type="tel"
-                        placeholder="Phone Number"
-                        value={newClient.phone}
-                        onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-                        className="input-field"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Billing Address */}
-                  <div className="mb-6">
-                    <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
-                      Billing Address
-                    </h5>
-                    <div className="grid grid-cols-1 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Street Address"
-                        value={newClient.billingAddress.street}
-                        onChange={(e) => setNewClient({ 
-                          ...newClient, 
-                          billingAddress: { ...newClient.billingAddress, street: e.target.value }
-                        })}
-                        className="input-field"
-                      />
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input
-                          type="text"
-                          placeholder="City"
-                          value={newClient.billingAddress.city}
-                          onChange={(e) => setNewClient({ 
-                            ...newClient, 
-                            billingAddress: { ...newClient.billingAddress, city: e.target.value }
-                          })}
-                          className="input-field"
-                        />
-                        <input
-                          type="text"
-                          placeholder="State/Province"
-                          value={newClient.billingAddress.state}
-                          onChange={(e) => setNewClient({ 
-                            ...newClient, 
-                            billingAddress: { ...newClient.billingAddress, state: e.target.value }
-                          })}
-                          className="input-field"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Postal Code"
-                          value={newClient.billingAddress.postalCode}
-                          onChange={(e) => setNewClient({ 
-                            ...newClient, 
-                            billingAddress: { ...newClient.billingAddress, postalCode: e.target.value }
-                          })}
-                          className="input-field"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Country"
-                        value={newClient.billingAddress.country}
-                        onChange={(e) => setNewClient({ 
-                          ...newClient, 
-                          billingAddress: { ...newClient.billingAddress, country: e.target.value }
-                        })}
-                        className="input-field"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={addClient}
-                      className="btn-primary flex-1"
-                    >
-                      <ApperIcon name="UserPlus" className="w-4 h-4 mr-2" />
-                      Add Client Profile
-                    </button>
-                    <button
-                      onClick={() => setNewClient({ 
-                        companyName: '', 
-                        contactPerson: '', 
-                        email: '', 
-                        phone: '',
-                        billingAddress: {
-                          street: '',
-                          city: '',
-                          state: '',
-                          postalCode: '',
-                          country: ''
-                        }
-                      })}
-                      className="btn-secondary"
-                    >
-                      Clear Form
-                    </button>
-                  </div>
-                </div>
-              )}
-
-
-
-              <div className="grid gap-4">
-                {filteredClients.map((client, index) => (
+              <AnimatePresence mode="wait">
+                {/* Client List Tab */}
+                {activeClientTab === 'list' && (
                   <motion.div
-                    key={client.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="card p-6 hover:shadow-card transition-all duration-300"
+                    key="client-list"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-6"
                   >
-                    <div className="flex flex-col lg:flex-row lg:justify-between gap-6">
-                      {/* Client Information */}
-                      <div className="flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
-                          <div>
-                            <h4 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                              {client.companyName}
-                            </h4>
-                            {client.contactPerson && (
-                              <p className="text-surface-600 dark:text-surface-400 font-medium mb-1">
-                                <ApperIcon name="User" className="w-4 h-4 inline mr-2" />
-                                {client.contactPerson}
-                              </p>
-                            )}
-                            <div className="flex flex-col gap-1 text-sm text-surface-500 dark:text-surface-400">
-                              <span className="flex items-center">
-                                <ApperIcon name="Mail" className="w-4 h-4 mr-2" />
-                                {client.email}
-                              </span>
-                              {client.phone && (
-                                <span className="flex items-center">
-                                  <ApperIcon name="Phone" className="w-4 h-4 mr-2" />
-                                  {client.phone}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                    {/* Client Search Bar */}
+                    <div className="mb-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <div className="relative flex-1 max-w-md">
+                          <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
+                          <input
+                            type="text"
+                            placeholder="Search by company name or contact name..."
+                            value={clientSearchTerm}
+                            onChange={(e) => setClientSearchTerm(e.target.value)}
+                            className="input-field pl-10 w-full focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                          />
+                          {clientSearchTerm && (
+                            <button
+                              onClick={() => setClientSearchTerm('')}
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-surface-400 hover:text-surface-600 transition-colors"
+                            >
+                              <ApperIcon name="X" className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
-                        
-                        {/* Billing Address */}
-                        {(client.billingAddress?.street || client.billingAddress?.city) && (
-                          <div className="bg-surface-100 dark:bg-surface-700/30 rounded-xl p-4">
-                            <h5 className="font-semibold text-surface-700 dark:text-surface-300 mb-2 flex items-center">
-                              <ApperIcon name="MapPin" className="w-4 h-4 mr-2" />
-                              Billing Address
-                            </h5>
-                            <div className="text-sm text-surface-600 dark:text-surface-400 space-y-1">
-                              {client.billingAddress.street && (
-                                <p>{client.billingAddress.street}</p>
-                              )}
-                              <p>
-                                {[client.billingAddress.city, client.billingAddress.state, client.billingAddress.postalCode]
-                                  .filter(Boolean)
-                                  .join(', ')}
-                              </p>
-                              {client.billingAddress.country && (
-                                <p>{client.billingAddress.country}</p>
+                        <button
+                          onClick={() => setActiveClientTab('add')}
+                          className="btn-primary flex items-center space-x-2 px-4 py-3"
+                        >
+                          <ApperIcon name="UserPlus" className="w-4 h-4" />
+                          <span>Add New Client</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Client Cards */}
+                    <div className="grid gap-4">
+                      {filteredClients.map((client, index) => (
+                        <motion.div
+                          key={client.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="card p-6 hover:shadow-card transition-all duration-300"
+                        >
+                          <div className="flex flex-col lg:flex-row lg:justify-between gap-6">
+                            {/* Client Information */}
+                            <div className="flex-1">
+                              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                                <div>
+                                  <h4 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                                    {client.companyName}
+                                  </h4>
+                                  {client.contactPerson && (
+                                    <p className="text-surface-600 dark:text-surface-400 font-medium mb-1">
+                                      <ApperIcon name="User" className="w-4 h-4 inline mr-2" />
+                                      {client.contactPerson}
+                                    </p>
+                                  )}
+                                  <div className="flex flex-col gap-1 text-sm text-surface-500 dark:text-surface-400">
+                                    <span className="flex items-center">
+                                      <ApperIcon name="Mail" className="w-4 h-4 mr-2" />
+                                      {client.email}
+                                    </span>
+                                    {client.phone && (
+                                      <span className="flex items-center">
+                                        <ApperIcon name="Phone" className="w-4 h-4 mr-2" />
+                                        {client.phone}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Billing Address */}
+                              {(client.billingAddress?.street || client.billingAddress?.city) && (
+                                <div className="bg-surface-100 dark:bg-surface-700/30 rounded-xl p-4">
+                                  <h5 className="font-semibold text-surface-700 dark:text-surface-300 mb-2 flex items-center">
+                                    <ApperIcon name="MapPin" className="w-4 h-4 mr-2" />
+                                    Billing Address
+                                  </h5>
+                                  <div className="text-sm text-surface-600 dark:text-surface-400 space-y-1">
+                                    {client.billingAddress.street && (
+                                      <p>{client.billingAddress.street}</p>
+                                    )}
+                                    <p>
+                                      {[client.billingAddress.city, client.billingAddress.state, client.billingAddress.postalCode]
+                                        .filter(Boolean)
+                                        .join(', ')}
+                                    </p>
+                                    {client.billingAddress.country && (
+                                      <p>{client.billingAddress.country}</p>
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:min-w-[160px]">
+                              <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2">
+                                <ApperIcon name="Edit" className="w-4 h-4" />
+                                <span>Edit Profile</span>
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  setCurrentInvoice({ ...currentInvoice, clientId: client.id })
+                                  setActiveTab('create')
+                                  toast.info(`Creating invoice for ${client.companyName}`)
+                                }}
+                                className="btn-primary text-sm px-4 py-2 flex items-center justify-center space-x-2"
+                              >
+                                <ApperIcon name="Plus" className="w-4 h-4" />
+                                <span>New Invoice</span>
+                              </button>
+                              <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                <ApperIcon name="Trash2" className="w-4 h-4" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </div>
-                        )}
-                      </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Empty States */}
+                    {filteredClients.length === 0 && clientSearchTerm && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-12"
+                      >
+                        <ApperIcon name="Search" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                        <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                          No clients found
+                        </h4>
+                        <p className="text-surface-500 dark:text-surface-500">
+                          No clients match your search criteria. Try different keywords.
+                        </p>
+                      </motion.div>
+                    )}
+                    
+                    {clients.length === 0 && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-12"
+                      >
+                        <ApperIcon name="Users" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                        <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                          No clients yet
+                        </h4>
+                        <p className="text-surface-500 dark:text-surface-500">
+                          Add your first client profile to get started with invoicing.
+                        </p>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Add New Client Tab */}
+                {activeClientTab === 'add' && (
+                  <motion.div
+                    key="add-client"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-6"
+                  >
+
+
+
+
+
+
+                    <div className="card p-6 bg-surface-50 dark:bg-surface-700/50">
+                      <h4 className="font-bold text-surface-900 dark:text-surface-100 mb-4">
+                        Add New Client Profile
+                      </h4>
                       
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:min-w-[160px]">
-                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2">
-                          <ApperIcon name="Edit" className="w-4 h-4" />
-                          <span>Edit Profile</span>
-                        </button>
-                        <button 
+                      {/* Basic Information */}
+                      <div className="mb-6">
+                        <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                          Basic Information
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            placeholder="Company Name *"
+                            value={newClient.companyName}
+                            onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
+                            className="input-field"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Contact Person"
+                            value={newClient.contactPerson}
+                            onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
+                            className="input-field"
+                          />
+                          <input
+                            type="email"
+                            placeholder="Email Address *"
+                            value={newClient.email}
+                            onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                            className="input-field"
+                          />
+                          <input
+                            type="tel"
+                            placeholder="Phone Number"
+                            value={newClient.phone}
+                            onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                            className="input-field"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Billing Address */}
+                      <div className="mb-6">
+                        <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                          Billing Address
+                        </h5>
+                        <div className="grid grid-cols-1 gap-4">
+                          <input
+                            type="text"
+                            placeholder="Street Address"
+                            value={newClient.billingAddress.street}
+                            onChange={(e) => setNewClient({ 
+                              ...newClient, 
+                              billingAddress: { ...newClient.billingAddress, street: e.target.value }
+                            })}
+                            className="input-field"
+                          />
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input
+                              type="text"
+                              placeholder="City"
+                              value={newClient.billingAddress.city}
+                              onChange={(e) => setNewClient({ 
+                                ...newClient, 
+                                billingAddress: { ...newClient.billingAddress, city: e.target.value }
+                              })}
+                              className="input-field"
+                            />
+                            <input
+                              type="text"
+                              placeholder="State/Province"
+                              value={newClient.billingAddress.state}
+                              onChange={(e) => setNewClient({ 
+                                ...newClient, 
+                                billingAddress: { ...newClient.billingAddress, state: e.target.value }
+                              })}
+                              className="input-field"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Postal Code"
+                              value={newClient.billingAddress.postalCode}
+                              onChange={(e) => setNewClient({ 
+                                ...newClient, 
+                                billingAddress: { ...newClient.billingAddress, postalCode: e.target.value }
+                              })}
+                              className="input-field"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Country"
+                            value={newClient.billingAddress.country}
+                            onChange={(e) => setNewClient({ 
+                              ...newClient, 
+                              billingAddress: { ...newClient.billingAddress, country: e.target.value }
+                            })}
+                            className="input-field"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <button
                           onClick={() => {
-                            setCurrentInvoice({ ...currentInvoice, clientId: client.id })
-                            setActiveTab('create')
-                            toast.info(`Creating invoice for ${client.companyName}`)
+                            addClient()
+                            if (newClient.companyName && newClient.email) {
+                              setActiveClientTab('list')
+                            }
                           }}
-                          className="btn-primary text-sm px-4 py-2 flex items-center justify-center space-x-2"
+                          className="btn-primary flex-1"
                         >
-                          <ApperIcon name="Plus" className="w-4 h-4" />
-                          <span>New Invoice</span>
+                          <ApperIcon name="UserPlus" className="w-4 h-4 mr-2" />
+                          Add Client Profile
                         </button>
-                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
-                          <ApperIcon name="Trash2" className="w-4 h-4" />
-                          <span>Delete</span>
+                        <button
+                          onClick={() => setNewClient({ 
+                            companyName: '', 
+                            contactPerson: '', 
+                            email: '', 
+                            phone: '',
+                            billingAddress: {
+                              street: '',
+                              city: '',
+                              state: '',
+                              postalCode: '',
+                              country: ''
+                            }
+                          })}
+                          className="btn-secondary"
+                        >
+                          Clear Form
                         </button>
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                )}
+              </AnimatePresence>
 
-              </div>
-
-              {filteredClients.length === 0 && clientSearchTerm && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-12"
-                >
-                  <ApperIcon name="Search" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
-                  <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
-                    No clients found
-                  </h4>
-                  <p className="text-surface-500 dark:text-surface-500">
-                    No clients match your search criteria. Try different keywords.
-                  </p>
-                </motion.div>
-              )}
-              
-              {clients.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-12"
-                >
-                  <ApperIcon name="Users" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
-                  <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
-                    No clients yet
-                  </h4>
-                  <p className="text-surface-500 dark:text-surface-500">
-                    Add your first client profile to get started with invoicing.
-                  </p>
-                </motion.div>
-              )}
 
             </motion.div>
 
