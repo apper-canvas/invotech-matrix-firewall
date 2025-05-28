@@ -804,44 +804,128 @@ const MainFeature = () => {
                   </motion.div>
 
                 ))}
-              </div>
-              </div>
-
-
-                
-                {filteredClients.length === 0 && clientSearchTerm && (
+              <div className="grid gap-4">
+                {filteredClients.map((client, index) => (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center py-12"
+                    key={client.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="card p-6 hover:shadow-card transition-all duration-300"
                   >
-                    <ApperIcon name="Search" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
-                    <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
-                      No clients found
-                    </h4>
-                    <p className="text-surface-500 dark:text-surface-500">
-                      No clients match your search criteria. Try different keywords.
-                    </p>
+                    <div className="flex flex-col lg:flex-row lg:justify-between gap-6">
+                      {/* Client Information */}
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                          <div>
+                            <h4 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                              {client.companyName}
+                            </h4>
+                            {client.contactPerson && (
+                              <p className="text-surface-600 dark:text-surface-400 font-medium mb-1">
+                                <ApperIcon name="User" className="w-4 h-4 inline mr-2" />
+                                {client.contactPerson}
+                              </p>
+                            )}
+                            <div className="flex flex-col gap-1 text-sm text-surface-500 dark:text-surface-400">
+                              <span className="flex items-center">
+                                <ApperIcon name="Mail" className="w-4 h-4 mr-2" />
+                                {client.email}
+                              </span>
+                              {client.phone && (
+                                <span className="flex items-center">
+                                  <ApperIcon name="Phone" className="w-4 h-4 mr-2" />
+                                  {client.phone}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Billing Address */}
+                        {(client.billingAddress?.street || client.billingAddress?.city) && (
+                          <div className="bg-surface-100 dark:bg-surface-700/30 rounded-xl p-4">
+                            <h5 className="font-semibold text-surface-700 dark:text-surface-300 mb-2 flex items-center">
+                              <ApperIcon name="MapPin" className="w-4 h-4 mr-2" />
+                              Billing Address
+                            </h5>
+                            <div className="text-sm text-surface-600 dark:text-surface-400 space-y-1">
+                              {client.billingAddress.street && (
+                                <p>{client.billingAddress.street}</p>
+                              )}
+                              <p>
+                                {[client.billingAddress.city, client.billingAddress.state, client.billingAddress.postalCode]
+                                  .filter(Boolean)
+                                  .join(', ')}
+                              </p>
+                              {client.billingAddress.country && (
+                                <p>{client.billingAddress.country}</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:min-w-[160px]">
+                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2">
+                          <ApperIcon name="Edit" className="w-4 h-4" />
+                          <span>Edit Profile</span>
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setCurrentInvoice({ ...currentInvoice, clientId: client.id })
+                            setActiveTab('create')
+                            toast.info(`Creating invoice for ${client.companyName}`)
+                          }}
+                          className="btn-primary text-sm px-4 py-2 flex items-center justify-center space-x-2"
+                        >
+                          <ApperIcon name="Plus" className="w-4 h-4" />
+                          <span>New Invoice</span>
+                        </button>
+                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
+                          <ApperIcon name="Trash2" className="w-4 h-4" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
                   </motion.div>
-                )}
-                
-                {clients.length === 0 && (
+                ))}
 
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center py-12"
-                  >
-                    <ApperIcon name="Users" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
-                    <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
-                      No clients yet
-                    </h4>
-                    <p className="text-surface-500 dark:text-surface-500">
-                      Add your first client profile to get started with invoicing.
-                    </p>
-                  </motion.div>
-                )}
               </div>
+
+              {filteredClients.length === 0 && clientSearchTerm && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <ApperIcon name="Search" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                  <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                    No clients found
+                  </h4>
+                  <p className="text-surface-500 dark:text-surface-500">
+                    No clients match your search criteria. Try different keywords.
+                  </p>
+                </motion.div>
+              )}
+              
+              {clients.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12"
+                >
+                  <ApperIcon name="Users" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                  <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                    No clients yet
+                  </h4>
+                  <p className="text-surface-500 dark:text-surface-500">
+                    Add your first client profile to get started with invoicing.
+                  </p>
+                </motion.div>
+              )}
+
             </motion.div>
 
 
