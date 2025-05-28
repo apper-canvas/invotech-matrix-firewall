@@ -7,10 +7,51 @@ import ApperIcon from './ApperIcon'
 const MainFeature = () => {
   const [activeTab, setActiveTab] = useState('create')
   const [clients, setClients] = useState([
-    { id: '1', companyName: 'TechCorp Solutions', email: 'billing@techcorp.com', contactPerson: 'John Smith' },
-    { id: '2', companyName: 'Digital Innovations LLC', email: 'accounts@diginnovate.com', contactPerson: 'Sarah Johnson' },
-    { id: '3', companyName: 'CloudFirst Systems', email: 'finance@cloudfirst.io', contactPerson: 'Mike Chen' }
+    {
+      id: '1',
+      companyName: 'TechCorp Solutions',
+      email: 'billing@techcorp.com',
+      contactPerson: 'John Smith',
+      phone: '+1 (555) 123-4567',
+      billingAddress: {
+        street: '123 Technology Drive',
+        city: 'San Francisco',
+        state: 'CA',
+        postalCode: '94105',
+        country: 'United States'
+      }
+    },
+    {
+      id: '2',
+      companyName: 'Digital Innovations LLC',
+      email: 'accounts@diginnovate.com',
+      contactPerson: 'Sarah Johnson',
+      phone: '+1 (555) 987-6543',
+      billingAddress: {
+        street: '456 Innovation Boulevard',
+        city: 'Austin',
+        state: 'TX',
+        postalCode: '73301',
+        country: 'United States'
+      }
+    },
+    {
+      id: '3',
+      companyName: 'CloudFirst Systems',
+      email: 'finance@cloudfirst.io',
+      contactPerson: 'Mike Chen',
+      phone: '+1 (555) 555-0123',
+      billingAddress: {
+        street: '789 Cloud Street',
+        city: 'Seattle',
+        state: 'WA',
+        postalCode: '98101',
+        country: 'United States'
+      }
+    }
   ])
+
+
   
   const [invoices, setInvoices] = useState([
     {
@@ -53,8 +94,16 @@ const MainFeature = () => {
     companyName: '',
     contactPerson: '',
     email: '',
-    phone: ''
+    phone: '',
+    billingAddress: {
+      street: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: ''
+    }
   })
+
 
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -147,7 +196,14 @@ const MainFeature = () => {
   // Add client
   const addClient = () => {
     if (!newClient.companyName || !newClient.email) {
-      toast.error('Please fill in required fields')
+      toast.error('Please fill in required fields (Company Name and Email)')
+      return
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(newClient.email)) {
+      toast.error('Please enter a valid email address')
       return
     }
 
@@ -157,9 +213,22 @@ const MainFeature = () => {
     }
 
     setClients([...clients, client])
-    setNewClient({ companyName: '', contactPerson: '', email: '', phone: '' })
-    toast.success('Client added successfully!')
+    setNewClient({ 
+      companyName: '', 
+      contactPerson: '', 
+      email: '', 
+      phone: '',
+      billingAddress: {
+        street: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: ''
+      }
+    })
+    toast.success('Client profile added successfully!')
   }
+
 
   // Filter invoices
   const filteredInvoices = invoices.filter(invoice => {
@@ -488,45 +557,136 @@ const MainFeature = () => {
               {/* Add New Client Form */}
               <div className="card p-6 bg-surface-50 dark:bg-surface-700/50">
                 <h4 className="font-bold text-surface-900 dark:text-surface-100 mb-4">
-                  Add New Client
+                  Add New Client Profile
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Company Name *"
-                    value={newClient.companyName}
-                    onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
-                    className="input-field"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Contact Person"
-                    value={newClient.contactPerson}
-                    onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
-                    className="input-field"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address *"
-                    value={newClient.email}
-                    onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-                    className="input-field"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    value={newClient.phone}
-                    onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
-                    className="input-field"
-                  />
+                
+                {/* Basic Information */}
+                <div className="mb-6">
+                  <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                    Basic Information
+                  </h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Company Name *"
+                      value={newClient.companyName}
+                      onChange={(e) => setNewClient({ ...newClient, companyName: e.target.value })}
+                      className="input-field"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Contact Person"
+                      value={newClient.contactPerson}
+                      onChange={(e) => setNewClient({ ...newClient, contactPerson: e.target.value })}
+                      className="input-field"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email Address *"
+                      value={newClient.email}
+                      onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                      className="input-field"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Phone Number"
+                      value={newClient.phone}
+                      onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                      className="input-field"
+                    />
+                  </div>
                 </div>
-                <button
-                  onClick={addClient}
-                  className="btn-primary mt-4"
-                >
-                  Add Client
-                </button>
+
+                {/* Billing Address */}
+                <div className="mb-6">
+                  <h5 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-3">
+                    Billing Address
+                  </h5>
+                  <div className="grid grid-cols-1 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Street Address"
+                      value={newClient.billingAddress.street}
+                      onChange={(e) => setNewClient({ 
+                        ...newClient, 
+                        billingAddress: { ...newClient.billingAddress, street: e.target.value }
+                      })}
+                      className="input-field"
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <input
+                        type="text"
+                        placeholder="City"
+                        value={newClient.billingAddress.city}
+                        onChange={(e) => setNewClient({ 
+                          ...newClient, 
+                          billingAddress: { ...newClient.billingAddress, city: e.target.value }
+                        })}
+                        className="input-field"
+                      />
+                      <input
+                        type="text"
+                        placeholder="State/Province"
+                        value={newClient.billingAddress.state}
+                        onChange={(e) => setNewClient({ 
+                          ...newClient, 
+                          billingAddress: { ...newClient.billingAddress, state: e.target.value }
+                        })}
+                        className="input-field"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Postal Code"
+                        value={newClient.billingAddress.postalCode}
+                        onChange={(e) => setNewClient({ 
+                          ...newClient, 
+                          billingAddress: { ...newClient.billingAddress, postalCode: e.target.value }
+                        })}
+                        className="input-field"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Country"
+                      value={newClient.billingAddress.country}
+                      onChange={(e) => setNewClient({ 
+                        ...newClient, 
+                        billingAddress: { ...newClient.billingAddress, country: e.target.value }
+                      })}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={addClient}
+                    className="btn-primary flex-1"
+                  >
+                    <ApperIcon name="UserPlus" className="w-4 h-4 mr-2" />
+                    Add Client Profile
+                  </button>
+                  <button
+                    onClick={() => setNewClient({ 
+                      companyName: '', 
+                      contactPerson: '', 
+                      email: '', 
+                      phone: '',
+                      billingAddress: {
+                        street: '',
+                        city: '',
+                        state: '',
+                        postalCode: '',
+                        country: ''
+                      }
+                    })}
+                    className="btn-secondary"
+                  >
+                    Clear Form
+                  </button>
+                </div>
               </div>
+
 
               {/* Client List */}
               <div className="grid gap-4">
@@ -538,40 +698,102 @@ const MainFeature = () => {
                     transition={{ delay: index * 0.1 }}
                     className="card p-6 hover:shadow-card transition-all duration-300"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div>
-                        <h4 className="text-lg font-bold text-surface-900 dark:text-surface-100 mb-1">
-                          {client.companyName}
-                        </h4>
-                        <p className="text-surface-600 dark:text-surface-400 mb-1">
-                          {client.contactPerson}
-                        </p>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
-                          <span>{client.email}</span>
-                          {client.phone && (
-                            <>
-                              <span className="hidden sm:inline">•</span>
-                              <span>{client.phone}</span>
-                            </>
-                          )}
+                    <div className="flex flex-col lg:flex-row lg:justify-between gap-6">
+                      {/* Client Information */}
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                          <div>
+                            <h4 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                              {client.companyName}
+                            </h4>
+                            {client.contactPerson && (
+                              <p className="text-surface-600 dark:text-surface-400 font-medium mb-1">
+                                <ApperIcon name="User" className="w-4 h-4 inline mr-2" />
+                                {client.contactPerson}
+                              </p>
+                            )}
+                            <div className="flex flex-col gap-1 text-sm text-surface-500 dark:text-surface-400">
+                              <span className="flex items-center">
+                                <ApperIcon name="Mail" className="w-4 h-4 mr-2" />
+                                {client.email}
+                              </span>
+                              {client.phone && (
+                                <span className="flex items-center">
+                                  <ApperIcon name="Phone" className="w-4 h-4 mr-2" />
+                                  {client.phone}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
+                        
+                        {/* Billing Address */}
+                        {(client.billingAddress?.street || client.billingAddress?.city) && (
+                          <div className="bg-surface-100 dark:bg-surface-700/30 rounded-xl p-4">
+                            <h5 className="font-semibold text-surface-700 dark:text-surface-300 mb-2 flex items-center">
+                              <ApperIcon name="MapPin" className="w-4 h-4 mr-2" />
+                              Billing Address
+                            </h5>
+                            <div className="text-sm text-surface-600 dark:text-surface-400 space-y-1">
+                              {client.billingAddress.street && (
+                                <p>{client.billingAddress.street}</p>
+                              )}
+                              <p>
+                                {[client.billingAddress.city, client.billingAddress.state, client.billingAddress.postalCode]
+                                  .filter(Boolean)
+                                  .join(', ')}
+                              </p>
+                              {client.billingAddress.country && (
+                                <p>{client.billingAddress.country}</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       
-                      <div className="flex items-center space-x-2">
-                        <button className="btn-secondary text-sm px-4 py-2 flex items-center space-x-2">
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:min-w-[160px]">
+                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2">
                           <ApperIcon name="Edit" className="w-4 h-4" />
-                          <span>Edit</span>
+                          <span>Edit Profile</span>
                         </button>
-                        <button className="btn-primary text-sm px-4 py-2 flex items-center space-x-2">
+                        <button 
+                          onClick={() => {
+                            setCurrentInvoice({ ...currentInvoice, clientId: client.id })
+                            setActiveTab('create')
+                            toast.info(`Creating invoice for ${client.companyName}`)
+                          }}
+                          className="btn-primary text-sm px-4 py-2 flex items-center justify-center space-x-2"
+                        >
                           <ApperIcon name="Plus" className="w-4 h-4" />
                           <span>New Invoice</span>
+                        </button>
+                        <button className="btn-secondary text-sm px-4 py-2 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
+                          <ApperIcon name="Trash2" className="w-4 h-4" />
+                          <span>Delete</span>
                         </button>
                       </div>
                     </div>
                   </motion.div>
                 ))}
+                
+                {clients.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-12"
+                  >
+                    <ApperIcon name="Users" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                    <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                      No clients yet
+                    </h4>
+                    <p className="text-surface-500 dark:text-surface-500">
+                      Add your first client profile to get started with invoicing.
+                    </p>
+                  </motion.div>
+                )}
               </div>
-            </motion.div>
+
           )}
         </AnimatePresence>
       </div>
