@@ -107,6 +107,8 @@ const MainFeature = () => {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [clientSearchTerm, setClientSearchTerm] = useState('')
+
 
   // Calculate invoice totals
   const calculateTotals = (lineItems, taxRate = 8.5) => {
@@ -245,6 +247,16 @@ const MainFeature = () => {
     ))
     toast.success(`Invoice marked as ${newStatus}`)
   }
+
+  // Filter clients
+  const filteredClients = clients.filter(client => {
+    const searchLower = clientSearchTerm.toLowerCase()
+    return client.companyName.toLowerCase().includes(searchLower) ||
+           (client.contactPerson && client.contactPerson.toLowerCase().includes(searchLower)) ||
+           client.email.toLowerCase().includes(searchLower) ||
+           (client.phone && client.phone.toLowerCase().includes(searchLower))
+  })
+
 
   const tabs = [
     { id: 'create', label: 'Create Invoice', icon: 'Plus' },
@@ -550,9 +562,24 @@ const MainFeature = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
-                Client Management
-              </h3>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                  Client Management
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative">
+                    <ApperIcon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-surface-400" />
+                    <input
+                      type="text"
+                      placeholder="Search clients..."
+                      value={clientSearchTerm}
+                      onChange={(e) => setClientSearchTerm(e.target.value)}
+                      className="input-field pl-10 w-full sm:w-64"
+                    />
+                  </div>
+                </div>
+              </div>
+
 
               {/* Add New Client Form */}
               <div className="card p-6 bg-surface-50 dark:bg-surface-700/50">
@@ -689,8 +716,8 @@ const MainFeature = () => {
 
 
               {/* Client List */}
-              <div className="grid gap-4">
-                {clients.map((client, index) => (
+              {filteredClients.map((client, index) => (
+
                   <motion.div
                     key={client.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -776,8 +803,27 @@ const MainFeature = () => {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+
+                
+                {filteredClients.length === 0 && clientSearchTerm && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-12"
+                  >
+                    <ApperIcon name="Search" className="w-16 h-16 mx-auto mb-4 text-surface-400" />
+                    <h4 className="text-lg font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                      No clients found
+                    </h4>
+                    <p className="text-surface-500 dark:text-surface-500">
+                      No clients match your search criteria. Try different keywords.
+                    </p>
+                  </motion.div>
+                )}
                 
                 {clients.length === 0 && (
+
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
